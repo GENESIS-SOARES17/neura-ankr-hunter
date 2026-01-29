@@ -1,0 +1,33 @@
+
+
+
+
+Neura ANKR Hunter is a digital treasure-hunting simulator where precision is your greatest ally. The game blends the nostalgia of Minesweeper with the theme of digital assets and the Web3 universe.
+
+🎯 Game Mechanics
+
+Search for ANKR logos to increase your score, but avoid the Scam blocks — one mistake and the session ends instantly.
+
+⚡ Key Differentiator
+
+A minimalist, lightweight, and fluid environment, developed exclusively for the Neura Network, focused on performance, user experience, and future blockchain integration.
+
+🚀 Project Evolution
+
+Currently, the game is a simulator under development. In upcoming versions, it will feature:
+
+🔗 Web3 wallet connection
+
+👛 Display of the connected wallet and a disconnect button
+
+💰 Pool system
+
+🎟️ Small entry fee
+
+💸 Small withdrawal fee, reintegrated into the pool
+
+♻️ Sustainable in-game economy model
+
+🕹️ Hunt to earn
+
+Access the project: [YOUR GAME LINK]

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEURA ANKR - HUNTER</title>
+    <link href="https://fonts.googleapis.com/css?family=Baumans&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            font-family: 'Baumans', cursive;
+            color: white;
+            user-select: none;
+            padding: 20px;
+        }
+        
+        .game-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .game-title {
+            margin: 10px 0 20px 0;
+            font-size: 28px;
+            text-align: center;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            letter-spacing: 2px;
+        }
+        
+        #status-panel {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2d2d2d;
+            padding: 12px;
+            border: 4px outset #666;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .wallet-box {
+            background: linear-gradient(145deg, #1a1a1a, #000);
+            color: #00ff00;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+            border: 3px outset #444;
+            border-radius: 6px;
+            text-align: center;
+            min-width: 145px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        
+        .wallet-label {
+            font-size: 11px;
+            color: #aaa;
+            display: block;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .wallet-value {
+            font-size: 22px;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+        }
+        
+        #resetGame {
+            width: 60px;
+            height: 60px;
+            font-size: 28px;
+            cursor: pointer;
+            background: linear-gradient(145deg, #bdbdbd, #9e9e9e);
+            border: 4px outset #eee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        #resetGame:hover {
+            transform: scale(1.05);
+            background: linear-gradient(145deg, #d1d1d1, #b0b0b0);
+        }
+        
+        #resetGame:active {
+            border-style: inset;
+            transform: scale(0.95);
+        }
+        
+        #mineSweeper {
+            width: 480px;
+            height: 480px;
+            border: 6px outset #666;
+            background-color: #000;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+        
+        canvas {
+            display: block;
+            image-rendering: pixelated;
+            cursor: crosshair;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #ticker-bar {
+            width: 480px;
+            height: 42px;
+            background: linear-gradient(90deg, #000 0%, #111 100%);
+            border: 4px inset #333;
+            margin-top: 15px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            border-radius: 4px;
+        }
+        
+        #ticker-content {
+            white-space: nowrap;
+            display: inline-block;
+            animation: ticker 40s linear infinite;
+            color: #00ff00;
+            font-weight: bold;
+            font-size: 15px;
+            font-family: 'Courier New', monospace;
+            padding: 2px 0;
+        }
+        
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .asset {
+            margin-right: 50px;
+            padding: 4px 8px;
+            background: rgba(0, 100, 0, 0.2);
+            border-radius: 3px;
+        }
+        
+        .action-buttons {
+            width: 480px;
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .btn-withdraw {
+            width: 100%;
+            padding: 16px 0;
+            font-family: 'Baumans', cursive;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(145deg, #ff0000, #cc0000);
+            border: 4px outset #ff4d4d;
+            cursor: pointer;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+        
+        .btn-withdraw:hover {
+            background: linear-gradient(145deg, #ff3333, #dd0000);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255,0,0,0.3);
+        }
+        
+        .btn-withdraw:active {
+            border-style: inset;
+            transform: translateY(1px);
+        }
+        
+        .wallet-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .btn-wallet {
+            flex: 1;
+            padding: 14px 0;
+            font-family: 'Baumans', cursive;
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(145deg, #00a859, #008746);
+            border: 3px outset #00c86e;
+            cursor: pointer;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .btn-wallet:hover {
+            background: linear-gradient(145deg, #00c06e, #00a859);
+            transform: translateY(-1px);
+        }
+        
+        .btn-wallet:active {
+            border-style: inset;
+            transform: translateY(1px);
+        }
+        
+        .btn-wallet.highlight {
+            color: #ffff00;
+            background: linear-gradient(145deg, #0066a8, #004d7f);
+            border: 3px outset #0088ff;
+            text-shadow: 0 0 5px rgba(255,255,0,0.5);
+        }
+        
+        .btn-wallet.highlight:hover {
+            background: linear-gradient(145deg, #0088dd, #0066a8);
+        }
+        
+        .game-instructions {
+            width: 480px;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border: 2px outset #444;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #aaa;
+            text-align: center;
+        }
+        
+        @media (max-width: 520px) {
+            .game-container {
+                transform: scale(0.9);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .game-container {
+                transform: scale(0.85);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="game-title">NEURA ANKR - HUNTER</h1>
+        
+        <div id="status-panel">
+            <div class="wallet-box">
+                <span class="wallet-label">GANHO ATUAL</span>
+                <span id="current-gain" class="wallet-value">0.000</span>
+            </div>
+            
+            <button id="resetGame" title="Reiniciar Jogo">😊</button>
+
+            <div class="wallet-box">
+                <span class="wallet-label">TOTAL ACUMULADO</span>
+                <span id="total-balance" class="wallet-value">0.000</span>
+            </div>
+        </div>
+
+        <div id="mineSweeper">
+            <!-- Canvas será inserido via JavaScript -->
+        </div>
+
+        <div id="ticker-bar">
+            <div id="ticker-content">Sincronizando com a Rede de Ativos Neura...</div>
+        </div>
+
+        <div class="action-buttons">
+            <div class="btn-withdraw" id="withdrawBtn">SAQUE</div>
+            <div class="wallet-row">
+                <div class="btn-wallet" id="connectBtn">CONECTAR</div>
+                <div class="btn-wallet highlight" id="walletStatus">CARTEIRA CONECTADA</div>
+                <div class="btn-wallet" id="disconnectBtn">DESCONECTAR</div>
+            </div>
+        </div>
+        
+        <div class="game-instructions">
+            <strong>INSTRUÇÕES:</strong> Clique nos quadrados para encontrar ANKR (+0.001) e evitar SCAM (fim de jogo)
+        </div>
+    </div>
+
+    <script>
+        // Configurações do jogo
+        const TILE_SIZE = 30;
+        const ROWS = 16;
+        const COLS = 16;
+        const SCAM_COUNT = 35;
+        const ANKR_COUNT = 20;
+        const ANKR_VALUE = 0.001;
+        
+        // Estado do jogo
+        let gameState = {
+            score: 0,
+            totalBalance: 0,
+            gameOver: false,
+            board: [],
+            imagesLoaded: 0,
+            totalImages: 3
+        };
+        
+        // Elementos DOM
+        const elements = {
+            currentGain: document.getElementById('current-gain'),
+            totalBalance: document.getElementById('total-balance'),
+            resetButton: document.getElementById('resetGame'),
+            tickerContent: document.getElementById('ticker-content'),
+            withdrawBtn: document.getElementById('withdrawBtn'),
+            connectBtn: document.getElementById('connectBtn'),
+            walletStatus: document.getElementById('walletStatus'),
+            disconnectBtn: document.getElementById('disconnectBtn')
+        };
+        
+        // Carregamento de recursos
+        const resources = {
+            audio: new Audio('bomba_www.mp3'),
+            images: {
+                scam: new Image(),
+                ankr: new Image(),
+                background: new Image()
+            }
+        };
+        
+        // Configurar áudio
+        resources.audio.volume = 0.7;
+        resources.audio.preload = 'auto';
+        
+        // Configurar imagens
+        const setupImages = () => {
+            resources.images.scam.src = 'scam.png';
+            resources.images.ankr.src = 'logo ankr.png';
+            resources.images.background.src = 'logo neura 1.png';
+            
+            // Contar carregamento de imagens
+            Object.values(resources.images).forEach(img => {
+                img.onload = () => {
+                    gameState.imagesLoaded++;
+                    if (gameState.imagesLoaded === gameState.totalImages) {
+                        console.log('Todas as imagens carregadas');
+                    }
+                };
+                img.onerror = () => {
+                    console.error('Erro ao carregar imagem:', img.src);
+                };
+            });
+        };
+        
+        // Inicializar tabuleiro
+        const initBoard = () => {
+            gameState.board = [];
+            gameState.score = 0;
+            gameState.gameOver = false;
+            elements.resetButton.textContent = '😊';
+            elements.currentGain.textContent = '0.000';
+            updateDisplay();
+            
+            // Criar tabuleiro vazio
+            for (let y = 0; y < ROWS; y++) {
+                gameState.board[y] = [];
+                for (let x = 0; x < COLS; x++) {
+                    gameState.board[y][x] = {
+                        x, y,
+                        covered: true,
+                        type: 'empty',
+                        revealed: false
+                    };
+                }
+            }
+            
+            // Adicionar SCAMs
+            let placed = 0;
+            while (placed < SCAM_COUNT) {
+                const x = Math.floor(Math.random() * COLS);
+                const y = Math.floor(Math.random() * ROWS);
+                
+                if (gameState.board[y][x].type === 'empty') {
+                    gameState.board[y][x].type = 'scam';
+                    placed++;
+                }
+            }
+            
+            // Adicionar ANKRs
+            placed = 0;
+            while (placed < ANKR_COUNT) {
+                const x = Math.floor(Math.random() * COLS);
+                const y = Math.floor(Math.random() * ROWS);
+                
+                if (gameState.board[y][x].type === 'empty') {
+                    gameState.board[y][x].type = 'ankr';
+                    placed++;
+                }
+            }
+        };
+        
+        // Atualizar display
+        const updateDisplay = () => {
+            elements.currentGain.textContent = gameState.score.toFixed(3);
+            elements.totalBalance.textContent = gameState.totalBalance.toFixed(3);
+        };
+        
+        // Revelar célula
+        const revealCell = (x, y) => {
+            if (gameState.gameOver) return;
+            if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return;
+            
+            const cell = gameState.board[y][x];
+            if (!cell.covered) return;
+            
+            cell.covered = false;
+            
+            if (cell.type === 'scam') {
+                // Fim de jogo - SCAM encontrado
+                gameState.gameOver = true;
+                elements.resetButton.textContent = '😵';
+                
+                // Tocar som
+                resources.audio.currentTime = 0;
+                resources.audio.play().catch(e => console.log('Erro ao tocar áudio:', e));
+                
+                // Revelar todo o tabuleiro
+                for (let row of gameState.board) {
+                    for (let cell of row) {
+                        cell.covered = false;
+                    }
+                }
+                
+                // Adicionar ao total acumulado
+                gameState.totalBalance += gameState.score;
+                updateDisplay();
+                
+            } else if (cell.type === 'ankr') {
+                // Encontrou ANKR
+                gameState.score += ANKR_VALUE;
+                updateDisplay();
+            }
+        };
+        
+        // Desenhar tabuleiro
+        const drawBoard = (ctx) => {
+            ctx.clearRect(0, 0, 480, 480);
+            
+            for (let y = 0; y < ROWS; y++) {
+                for (let x = 0; x < COLS; x++) {
+                    const cell = gameState.board[y][x];
+                    const px = x * TILE_SIZE;
+                    const py = y * TILE_SIZE;
+                    
+                    // Desenhar célula
+                    if (cell.covered) {
+                        // Célula coberta
+                        if (resources.images.background.complete) {
+                            ctx.drawImage(resources.images.background, px, py, TILE_SIZE, TILE_SIZE);
+                        } else {
+                            ctx.fillStyle = '#333';
+                            ctx.fillRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+                        }
+                    } else {
+                        // Célula revelada
+                        if (cell.type === 'scam') {
+                            if (resources.images.scam.complete) {
+                                ctx.drawImage(resources.images.scam, px, py, TILE_SIZE, TILE_SIZE);
+                            } else {
+                                ctx.fillStyle = '#ff0000';
+                                ctx.fillRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+                            }
+                        } else if (cell.type === 'ankr') {
+                            if (resources.images.ankr.complete) {
+                                ctx.drawImage(resources.images.ankr, px, py, TILE_SIZE, TILE_SIZE);
+                            } else {
+                                ctx.fillStyle = '#00d4ff';
+                                ctx.fillRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+                            }
+                        } else {
+                            ctx.fillStyle = '#222';
+                            ctx.fillRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+                        }
+                    }
+                    
+                    // Borda da célula
+                    ctx.strokeStyle = '#444';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(px, py, TILE_SIZE, TILE_SIZE);
+                }
+            }
+        };
+        
+        // Atualizar ticker
+        const updateTicker = () => {
+            const coins = [
+                { name: "ANKR", max: 0.05, emoji: "⚡" },
+                { name: "BTC", max: 68000, emoji: "₿" },
+                { name: "ETH", max: 3500, emoji: "Ξ" },
+                { name: "NEURA", max: 2.5, emoji: "🧠" },
+                { name: "SOL", max: 180, emoji: "◎" }
+            ];
+            
+            const tickerHTML = coins.map(coin => {
+                const value = (Math.random() * coin.max).toFixed(4);
+                const change = (Math.random() > 0.5 ? '+' : '-') + (Math.random() * 3).toFixed(2) + '%';
+                const color = change.startsWith('+') ? '#00ff00' : '#ff0000';
+                
+                return `<span class="asset">${coin.emoji} ${coin.name}: $${value} <span style="color:${color}">${change}</span></span>`;
+            }).join("");
+            
+            elements.tickerContent.innerHTML = tickerHTML;
+        };
+        
+        // Setup dos botões
+        const setupButtons = () => {
+            // Botão de reset
+            elements.resetButton.addEventListener('click', () => {
+                // Adicionar score atual ao total antes de resetar
+                if (!gameState.gameOver && gameState.score > 0) {
+                    gameState.totalBalance += gameState.score;
+                }
+                initBoard();
+            });
+            
+            // Botão de saque
+            elements.withdrawBtn.addEventListener('click', () => {
+                if (gameState.totalBalance > 0) {
+                    alert(`SAQUE SOLICITADO!\nValor: ${gameState.totalBalance.toFixed(3)} ANKR\n\nEm breve esta funcionalidade estará disponível.`);
+                } else {
+                    alert('Você precisa acumular ANKR primeiro! Continue jogando.');
+                }
+            });
+            
+            // Botão conectar
+            elements.connectBtn.addEventListener('click', () => {
+                alert('Em breve: Conectar com MetaMask, Trust Wallet ou carteira similar.');
+            });
+            
+            // Status da carteira
+            elements.walletStatus.addEventListener('click', () => {
+                alert('Carteira conectada em modo demonstração.\nNa versão final, aqui aparecerá seu endereço e saldo.');
+            });
+            
+            // Botão desconectar
+            elements.disconnectBtn.addEventListener('click', () => {
+                alert('Funcionalidade de desconexão em desenvolvimento.');
+            });
+        };
+        
+        // Inicializar jogo
+        const initGame = () => {
+            // Setup dos recursos
+            setupImages();
+            setupButtons();
+            
+            // Criar canvas
+            const container = document.getElementById('mineSweeper');
+            const canvas = document.createElement('canvas');
+            canvas.width = 480;
+            canvas.height = 480;
+            canvas.id = 'gameCanvas';
+            container.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Inicializar tabuleiro
+            initBoard();
+            
+            // Evento de clique no canvas
+            canvas.addEventListener('mousedown', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                
+                const x = Math.floor(((e.clientX - rect.left) * scaleX) / TILE_SIZE);
+                const y = Math.floor(((e.clientY - rect.top) * scaleY) / TILE_SIZE);
+                
+                revealCell(x, y);
+            });
+            
+            // Atualizar ticker a cada 3 segundos
+            setInterval(updateTicker, 3000);
+            updateTicker();
+            
+            // Loop de animação
+            const gameLoop = () => {
+                drawBoard(ctx);
+                requestAnimationFrame(gameLoop);
+            };
+            
+            gameLoop();
+        };
+        
+        // Iniciar quando a página carregar
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
