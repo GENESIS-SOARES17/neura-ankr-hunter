@@ -30,4 +30,4 @@ Currently, the game is a simulator under development. In upcoming versions, it w
 
 🕹️ Hunt to earn
 
-Access the project: [YOUR GAME LINK]
+BUILT BY, Discord: 1genesis17 - wallet: 0xd139fBC8F34496db7A142b358Cb791988E8bE68e
