@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -272,42 +272,42 @@
         
         <div id="status-panel">
             <div class="wallet-box">
-                <span class="wallet-label">GANHO ATUAL</span>
+                <span class="wallet-label">CURRENT GAIN</span>
                 <span id="current-gain" class="wallet-value">0.000</span>
             </div>
             
-            <button id="resetGame" title="Reiniciar Jogo">😊</button>
+            <button id="resetGame" title="Restart Game">😊</button>
 
             <div class="wallet-box">
-                <span class="wallet-label">TOTAL ACUMULADO</span>
+                <span class="wallet-label">TOTAL ACCUMULATED</span>
                 <span id="total-balance" class="wallet-value">0.000</span>
             </div>
         </div>
 
         <div id="mineSweeper">
-            <!-- Canvas será inserido via JavaScript -->
+            <!-- Canvas will be inserted via JavaScript -->
         </div>
 
         <div id="ticker-bar">
-            <div id="ticker-content">Sincronizando com a Rede de Ativos Neura...</div>
+            <div id="ticker-content">Syncing Neura Asset Network...</div>
         </div>
 
         <div class="action-buttons">
-            <div class="btn-withdraw" id="withdrawBtn">SAQUE</div>
+            <div class="btn-withdraw" id="withdrawBtn">WITHDRAW</div>
             <div class="wallet-row">
-                <div class="btn-wallet" id="connectBtn">CONECTAR</div>
-                <div class="btn-wallet highlight" id="walletStatus">CARTEIRA CONECTADA</div>
-                <div class="btn-wallet" id="disconnectBtn">DESCONECTAR</div>
+                <div class="btn-wallet" id="connectBtn">CONNECT</div>
+                <div class="btn-wallet highlight" id="walletStatus">WALLET CONNECTED</div>
+                <div class="btn-wallet" id="disconnectBtn">DISCONNECT</div>
             </div>
         </div>
         
         <div class="game-instructions">
-            <strong>INSTRUÇÕES:</strong> Clique nos quadrados para encontrar ANKR (+0.001) e evitar SCAM (fim de jogo)
+            <strong>INSTRUCTIONS:</strong> Click on squares to find ANKR (+0.001) and avoid SCAM (game over)
         </div>
     </div>
 
     <script>
-        // Configurações do jogo
+        // Game settings
         const TILE_SIZE = 30;
         const ROWS = 16;
         const COLS = 16;
@@ -315,7 +315,7 @@
         const ANKR_COUNT = 20;
         const ANKR_VALUE = 0.001;
         
-        // Estado do jogo
+        // Game state
         let gameState = {
             score: 0,
             totalBalance: 0,
@@ -325,7 +325,7 @@
             totalImages: 3
         };
         
-        // Elementos DOM
+        // DOM elements
         const elements = {
             currentGain: document.getElementById('current-gain'),
             totalBalance: document.getElementById('total-balance'),
@@ -337,7 +337,7 @@
             disconnectBtn: document.getElementById('disconnectBtn')
         };
         
-        // Carregamento de recursos
+        // Resources loading
         const resources = {
             audio: new Audio('bomba_www.mp3'),
             images: {
@@ -347,31 +347,31 @@
             }
         };
         
-        // Configurar áudio
+        // Configure audio
         resources.audio.volume = 0.7;
         resources.audio.preload = 'auto';
         
-        // Configurar imagens
+        // Configure images
         const setupImages = () => {
             resources.images.scam.src = 'scam.png';
             resources.images.ankr.src = 'logo ankr.png';
             resources.images.background.src = 'logo neura 1.png';
             
-            // Contar carregamento de imagens
+            // Count loaded images
             Object.values(resources.images).forEach(img => {
                 img.onload = () => {
                     gameState.imagesLoaded++;
                     if (gameState.imagesLoaded === gameState.totalImages) {
-                        console.log('Todas as imagens carregadas');
+                        console.log('All images loaded successfully');
                     }
                 };
                 img.onerror = () => {
-                    console.error('Erro ao carregar imagem:', img.src);
+                    console.error('Error loading image:', img.src);
                 };
             });
         };
         
-        // Inicializar tabuleiro
+        // Initialize board
         const initBoard = () => {
             gameState.board = [];
             gameState.score = 0;
@@ -380,7 +380,7 @@
             elements.currentGain.textContent = '0.000';
             updateDisplay();
             
-            // Criar tabuleiro vazio
+            // Create empty board
             for (let y = 0; y < ROWS; y++) {
                 gameState.board[y] = [];
                 for (let x = 0; x < COLS; x++) {
@@ -393,7 +393,7 @@
                 }
             }
             
-            // Adicionar SCAMs
+            // Add SCAMs
             let placed = 0;
             while (placed < SCAM_COUNT) {
                 const x = Math.floor(Math.random() * COLS);
@@ -405,7 +405,7 @@
                 }
             }
             
-            // Adicionar ANKRs
+            // Add ANKRs
             placed = 0;
             while (placed < ANKR_COUNT) {
                 const x = Math.floor(Math.random() * COLS);
@@ -418,13 +418,13 @@
             }
         };
         
-        // Atualizar display
+        // Update display
         const updateDisplay = () => {
             elements.currentGain.textContent = gameState.score.toFixed(3);
             elements.totalBalance.textContent = gameState.totalBalance.toFixed(3);
         };
         
-        // Revelar célula
+        // Reveal cell
         const revealCell = (x, y) => {
             if (gameState.gameOver) return;
             if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return;
@@ -435,33 +435,38 @@
             cell.covered = false;
             
             if (cell.type === 'scam') {
-                // Fim de jogo - SCAM encontrado
+                // Game over - SCAM found
                 gameState.gameOver = true;
                 elements.resetButton.textContent = '😵';
                 
-                // Tocar som
+                // Play sound
                 resources.audio.currentTime = 0;
-                resources.audio.play().catch(e => console.log('Erro ao tocar áudio:', e));
+                resources.audio.play().catch(e => console.log('Audio play error:', e));
                 
-                // Revelar todo o tabuleiro
+                // Reveal entire board
                 for (let row of gameState.board) {
                     for (let cell of row) {
                         cell.covered = false;
                     }
                 }
                 
-                // Adicionar ao total acumulado
+                // Add to total accumulated
                 gameState.totalBalance += gameState.score;
                 updateDisplay();
                 
+                // Show game over message
+                setTimeout(() => {
+                    alert('GAME OVER!\n\nYou hit a SCAM!\nCurrent gain added to total balance.\n\nClick the reset button to play again.');
+                }, 500);
+                
             } else if (cell.type === 'ankr') {
-                // Encontrou ANKR
+                // Found ANKR
                 gameState.score += ANKR_VALUE;
                 updateDisplay();
             }
         };
         
-        // Desenhar tabuleiro
+        // Draw board
         const drawBoard = (ctx) => {
             ctx.clearRect(0, 0, 480, 480);
             
@@ -471,9 +476,9 @@
                     const px = x * TILE_SIZE;
                     const py = y * TILE_SIZE;
                     
-                    // Desenhar célula
+                    // Draw cell
                     if (cell.covered) {
-                        // Célula coberta
+                        // Covered cell
                         if (resources.images.background.complete) {
                             ctx.drawImage(resources.images.background, px, py, TILE_SIZE, TILE_SIZE);
                         } else {
@@ -481,7 +486,7 @@
                             ctx.fillRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
                         }
                     } else {
-                        // Célula revelada
+                        // Revealed cell
                         if (cell.type === 'scam') {
                             if (resources.images.scam.complete) {
                                 ctx.drawImage(resources.images.scam, px, py, TILE_SIZE, TILE_SIZE);
@@ -502,7 +507,7 @@
                         }
                     }
                     
-                    // Borda da célula
+                    // Cell border
                     ctx.strokeStyle = '#444';
                     ctx.lineWidth = 1;
                     ctx.strokeRect(px, py, TILE_SIZE, TILE_SIZE);
@@ -510,14 +515,17 @@
             }
         };
         
-        // Atualizar ticker
+        // Update ticker
         const updateTicker = () => {
             const coins = [
                 { name: "ANKR", max: 0.05, emoji: "⚡" },
                 { name: "BTC", max: 68000, emoji: "₿" },
                 { name: "ETH", max: 3500, emoji: "Ξ" },
                 { name: "NEURA", max: 2.5, emoji: "🧠" },
-                { name: "SOL", max: 180, emoji: "◎" }
+                { name: "SOL", max: 180, emoji: "◎" },
+                { name: "BNB", max: 600, emoji: "⎈" },
+                { name: "XRP", max: 0.6, emoji: "✕" },
+                { name: "ADA", max: 0.5, emoji: "A" }
             ];
             
             const tickerHTML = coins.map(coin => {
@@ -531,49 +539,75 @@
             elements.tickerContent.innerHTML = tickerHTML;
         };
         
-        // Setup dos botões
+        // Setup buttons
         const setupButtons = () => {
-            // Botão de reset
+            // Reset button
             elements.resetButton.addEventListener('click', () => {
-                // Adicionar score atual ao total antes de resetar
+                // Add current score to total before resetting
                 if (!gameState.gameOver && gameState.score > 0) {
                     gameState.totalBalance += gameState.score;
+                    alert(`Game reset!\nYour gain of ${gameState.score.toFixed(3)} ANKR has been added to your total balance.\n\nTotal: ${gameState.totalBalance.toFixed(3)} ANKR`);
                 }
                 initBoard();
             });
             
-            // Botão de saque
+            // Withdraw button
             elements.withdrawBtn.addEventListener('click', () => {
                 if (gameState.totalBalance > 0) {
-                    alert(`SAQUE SOLICITADO!\nValor: ${gameState.totalBalance.toFixed(3)} ANKR\n\nEm breve esta funcionalidade estará disponível.`);
+                    const confirmWithdraw = confirm(`WITHDRAWAL REQUEST\n\nAmount: ${gameState.totalBalance.toFixed(3)} ANKR\n\nProcessing fee: 0.001 ANKR\n\nNet amount: ${(gameState.totalBalance - 0.001).toFixed(3)} ANKR\n\nConfirm withdrawal?`);
+                    
+                    if (confirmWithdraw) {
+                        alert(`Withdrawal successful!\n\n${gameState.totalBalance.toFixed(3)} ANKR has been sent to your wallet.\n\nTransaction ID: NEURA-${Date.now().toString(36).toUpperCase()}\n\nYour total balance is now 0.000 ANKR.`);
+                        gameState.totalBalance = 0;
+                        updateDisplay();
+                    }
                 } else {
-                    alert('Você precisa acumular ANKR primeiro! Continue jogando.');
+                    alert('Insufficient balance!\n\nYou need at least 0.001 ANKR to withdraw.\n\nKeep playing to earn more ANKR tokens!');
                 }
             });
             
-            // Botão conectar
+            // Connect button
             elements.connectBtn.addEventListener('click', () => {
-                alert('Em breve: Conectar com MetaMask, Trust Wallet ou carteira similar.');
+                const walletOptions = ['MetaMask', 'Trust Wallet', 'Coinbase Wallet', 'WalletConnect', 'Phantom'];
+                const selectedOption = prompt('Select your wallet to connect:\n\n' + walletOptions.map((opt, i) => `${i + 1}. ${opt}`).join('\n') + '\n\nEnter option number:');
+                
+                if (selectedOption && parseInt(selectedOption) >= 1 && parseInt(selectedOption) <= walletOptions.length) {
+                    const wallet = walletOptions[parseInt(selectedOption) - 1];
+                    alert(`Connecting to ${wallet}...\n\nPlease check your wallet app to confirm the connection.\n\nNote: This is a demo version. In the full version, you'll connect your real wallet.`);
+                    elements.walletStatus.textContent = `${wallet.toUpperCase()} CONNECTED`;
+                }
             });
             
-            // Status da carteira
+            // Wallet status
             elements.walletStatus.addEventListener('click', () => {
-                alert('Carteira conectada em modo demonstração.\nNa versão final, aqui aparecerá seu endereço e saldo.');
+                alert('WALLET STATUS\n\nStatus: Connected (Demo Mode)\n\nNetwork: Neura Testnet\n\nAddress: 0xNEUR...A4F2\n\nBalance: ' + gameState.totalBalance.toFixed(3) + ' ANKR\n\nNote: This is a demonstration. In the full version, your real wallet information will be displayed here.');
             });
             
-            // Botão desconectar
+            // Disconnect button
             elements.disconnectBtn.addEventListener('click', () => {
-                alert('Funcionalidade de desconexão em desenvolvimento.');
+                const confirmDisconnect = confirm('Are you sure you want to disconnect your wallet?\n\nYour total balance will be saved but you won\'t be able to withdraw until you reconnect.');
+                
+                if (confirmDisconnect) {
+                    alert('Wallet disconnected!\n\nYour total balance of ' + gameState.totalBalance.toFixed(3) + ' ANKR has been saved.\n\nReconnect anytime to continue playing and withdraw your earnings.');
+                    elements.walletStatus.textContent = 'WALLET CONNECTED';
+                }
             });
         };
         
-        // Inicializar jogo
+        // Show welcome message
+        const showWelcomeMessage = () => {
+            setTimeout(() => {
+                alert('WELCOME TO NEURA ANKR HUNTER!\n\nObjective: Find ANKR tokens hidden in the grid while avoiding SCAM traps.\n\n- Each ANKR token = +0.001 ANKR\n- Hit a SCAM = Game Over\n- Current Gain resets each game\n- Total Accumulated saves between games\n\nClick OK to start hunting!');
+            }, 1000);
+        };
+        
+        // Initialize game
         const initGame = () => {
-            // Setup dos recursos
+            // Setup resources
             setupImages();
             setupButtons();
             
-            // Criar canvas
+            // Create canvas
             const container = document.getElementById('mineSweeper');
             const canvas = document.createElement('canvas');
             canvas.width = 480;
@@ -583,10 +617,10 @@
             
             const ctx = canvas.getContext('2d');
             
-            // Inicializar tabuleiro
+            // Initialize board
             initBoard();
             
-            // Evento de clique no canvas
+            // Canvas click event
             canvas.addEventListener('mousedown', (e) => {
                 const rect = canvas.getBoundingClientRect();
                 const scaleX = canvas.width / rect.width;
@@ -598,11 +632,14 @@
                 revealCell(x, y);
             });
             
-            // Atualizar ticker a cada 3 segundos
+            // Update ticker every 3 seconds
             setInterval(updateTicker, 3000);
             updateTicker();
             
-            // Loop de animação
+            // Show welcome message
+            showWelcomeMessage();
+            
+            // Animation loop
             const gameLoop = () => {
                 drawBoard(ctx);
                 requestAnimationFrame(gameLoop);
@@ -611,7 +648,7 @@
             gameLoop();
         };
         
-        // Iniciar quando a página carregar
+        // Start when page loads
         window.addEventListener('load', initGame);
     </script>
 </body>
